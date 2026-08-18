@@ -5,13 +5,8 @@ This repository implements a Retrieval-Augmented Generation (RAG) assistant for 
 
 Features
 - Ingest PDF files from `data/raw` and split into chunks.
-- Compute embeddings using a HuggingFace sentence-transformer and persist vectors in a Chroma database under `chroma_db`.
-- Retrieve top-k relevant chunks for a user question.
-- Classify intent into `POLICY_QUERY`, `GREETING`, `OUT_OF_SCOPE`, or `UNKNOWN`.
-- Generate answers grounded in retrieved policy context using Groq LLM.
-- Simple FastAPI HTTP endpoints for health checks, ingestion, intent detection, and querying.
+- Compute embeddings using a HuggingFace sentence-transformer and persist vectors in a Chroma database under `chroma_db`.it ran once, how to start again
 
-Requirements
 - Python 3.10+ recommended.
 - See `requirements.txt` for pinned dependencies.
 
@@ -88,5 +83,16 @@ uvicorn app:app --reload --host 0.0.0.0 --port 8000
 ```bash
 curl -X POST http://localhost:8000/ingest
 ```
+
+Streamlit UI
+1. Start locally:
+
+```bash
+streamlit run streamlit_app.py
+```
+
+2. For a free deploy, use Streamlit Community Cloud and point it at `streamlit_app.py`.
+3. Add `GROQ_API_KEY` in the Streamlit secrets or environment variables.
+4. Keep `data/raw` and `chroma_db` in the repo if you want the app to ship with the current policy data.
 
 
