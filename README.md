@@ -1,4 +1,3 @@
-
 HR Policy RAG
 
 Project overview
@@ -44,27 +43,10 @@ Endpoint: `POST /ingest`
 - This reads all `*.pdf` files in `data/raw`, extracts text per page, splits text into chunks, computes embeddings, and stores them in the Chroma vector store. It returns the number of pages and chunks processed. If no PDFs are found, the endpoint returns a 404 error.
 
 API endpoints
-- `GET /health` — basic health check returning `{ "status": "ok" }`.
 - `POST /ingest` — run ingestion (see Ingestion above).
 - `POST /intent` — accepts JSON `{ "question": "..." }`, returns detected intent.
 - `POST /results` — accepts JSON `{ "question": "..." }`, returns an answer grounded in retrieved policy context, the detected intent, and a list of source documents/pages.
 
-Usage examples
-- Detect intent:
-
-```bash
-curl -X POST http://localhost:8000/intent \
-	-H "Content-Type: application/json" \
-	-d '{"question":"Hello"}'
-```
-
-- Query for results:
-
-```bash
-curl -X POST http://localhost:8000/results \
-	-H "Content-Type: application/json" \
-	-d '{"question":"What is the leave policy?"}'
-```
 
 Files and responsibilities
 - `app.py`: FastAPI application and HTTP route handlers.
@@ -84,11 +66,6 @@ Vector store and models
 - Vector store: Chroma, persisted to `chroma_db`.
 - Intent classification and answer generation: Groq LLM (configured via `GROQ_API_KEY` and `GROQ_MODEL` in `parameters.py`).
 
-Notes and troubleshooting
-- Ensure `GROQ_API_KEY` is set and valid before running intent detection or answer generation.
-- If ingestion finds zero PDFs, verify files are present in `data/raw` and have a `.pdf` extension.
-- If retrieval returns no documents for a valid question, consider increasing `TOP_K` or verifying the ingestion completed successfully.
-
 Running locally
 1. Start the API with Uvicorn:
 
@@ -102,6 +79,4 @@ uvicorn app:app --reload --host 0.0.0.0 --port 8000
 curl -X POST http://localhost:8000/ingest
 ```
 
-Acknowledgements
-This implementation uses Chroma for vector storage, a HuggingFace sentence-transformer for embeddings, and Groq for LLM-powered intent detection and response generation.
 

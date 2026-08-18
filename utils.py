@@ -1,3 +1,4 @@
+import os
 from pathlib import Path
 import hashlib
 import re
@@ -157,7 +158,40 @@ def retrieve_documents(question: str) -> list[Document]:
 
     return documents
 
+def get_llm() -> ChatGroq:
+    api_key = GROQ_API_KEY or os.getenv("GROQ_API_KEY")
+    if not api_key:
+        raise ValueError("GROQ_API_KEY is missing or empty.")
+
+    model_name = GROQ_MODEL or "llama-3.3-70b-versatile"
+
+    return ChatGroq(
+        api_key=api_key,
+        model=model_name,
+        temperature=0,
+    )
+
+
 def detect_intent(question: str) -> str:
+    normalized = question.strip().lower()
+    greeting_markers = (
+        "hi",
+        "hello",
+        "hey",
+        "good morning",
+        "good afternoon",
+        "good evening",
+    )
+
+    if not normalized:
+        return "UNKNOWN"
+
+    if normalized in greeting_markers or any(
+        normalized.startswith(marker + " ") or normalized.startswith(marker)
+        for marker in greeting_markers
+    ):
+        return "GREETING"
+
     prompt = f"""
 Classify the user's message into exactly one of these intents:
 
@@ -195,13 +229,12 @@ User message:
 Return ONLY the intent name.
 """
 
-    llm = ChatGroq(
-        api_key=GROQ_API_KEY,
-        model=GROQ_MODEL,
-        temperature=0,
-    )
-
-    response = llm.invoke(prompt)
+    try:
+        llm = get_llm()
+        response = llm.invoke(prompt)
+    except Exception as exc:
+        print(f"Intent classification failed: {exc}")
+        return "UNKNOWN"
 
     intent = response.content.strip().upper()
 
@@ -250,12 +283,13 @@ QUESTION:
 ANSWER:
 """
 
-    llm = ChatGroq(
-        api_key=GROQ_API_KEY,
-        model=GROQ_MODEL,
-        temperature=0,
-    )
-
-    response = llm.invoke(prompt)
-    
-    return response.content
+    try:
+        llm = get_llm()
+        response = llm.invoke(prompt)
+        return response.content
+    except Exception as exc:
+        print(f"Answer generation failed: {exc}")
+        return (
+            "I couldn’t generate a reliable answer right now. "
+            "Please try again in a moment."
+        )

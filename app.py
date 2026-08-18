@@ -20,14 +20,10 @@ class QueryRequest(BaseModel):
 
 
 
-@app.get("/health")
-def health():
-    return {
-        "status": "ok"
-    }
 
-""" Test Route to check if the API is running, else it will ingest only once 
+""" Runs only at the time of updating the policies. 
 """
+
 @app.post("/ingest")
 def ingest():
     result = ingest_documents()

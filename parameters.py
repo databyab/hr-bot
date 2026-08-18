@@ -18,4 +18,4 @@ CHUNK_OVERLAP = 50
 
 TOP_K = 4
 
-GROQ_MODEL = "llama-3.1-8b-instant"
+GROQ_MODEL = os.getenv("GROQ_MODEL", "openai/gpt-oss-20b")
