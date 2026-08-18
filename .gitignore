@@ -3,5 +3,3 @@ venv/
 .venv/
 __pycache__/
 *.pyc
-chroma_db/
-data/processed/
