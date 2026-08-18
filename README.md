@@ -38,6 +38,16 @@ pip install -r requirements.txt
 3. Create a `.env` file and set `GROQ_API_KEY`.
 4. Place PDF HR policy documents into `data/raw`.
 
+Docker
+1. Build and start the service:
+
+```bash
+docker compose -f docker-compose-yaml up --build
+```
+
+2. If Docker on Linux needs elevated permissions, run the same command with `sudo`.
+3. The API will be available at `http://localhost:8000`.
+
 Ingestion
 Endpoint: `POST /ingest`
 - This reads all `*.pdf` files in `data/raw`, extracts text per page, splits text into chunks, computes embeddings, and stores them in the Chroma vector store. It returns the number of pages and chunks processed. If no PDFs are found, the endpoint returns a 404 error.
